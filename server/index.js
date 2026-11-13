@@ -2,11 +2,7 @@ import express from "express";
 import "dotenv/config";
 
 const app = express();
-<<<<<<< HEAD
 const port = process.env.PORT || 4174;
-=======
-const port = process.env.PORT || 5000;
->>>>>>> 09c7693e342766a241322bd2257a7abe178008e0
 
 app.use(express.json());
 
@@ -19,14 +15,11 @@ app.post("/api/send-email", async (req, res) => {
   }
 
   const apiKey = process.env.RESEND_API_KEY;
-  const to = process.env.RESEND_TO_EMAIL || "abhishekkushwaha4732@gmail.com";
+  const to = process.env.RESEND_TO_EMAIL || "tomorrowtech.engineering@gmail.com";
   const from = process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev";
 
   if (!apiKey) {
-<<<<<<< HEAD
-=======
-    console.error("Missing RESEND_API_KEY environment variable");
->>>>>>> 09c7693e342766a241322bd2257a7abe178008e0
+    console.error("Missing RESEND_API_KEY");
     res.status(500).json({ error: "Missing RESEND_API_KEY" });
     return;
   }
@@ -69,8 +62,27 @@ app.post("/api/send-email", async (req, res) => {
   }
 });
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`API server listening on http://localhost:${port}`);
+});
+
+server.on("error", (err) => {
+  if (err && err.code === "EADDRINUSE") {
+    console.error(
+      `Port ${port} is already in use. Another process may be running. Run: npx kill-port ${port}`
+    );
+    process.exit(1);
+  }
+  console.error("Server error:", err);
+  process.exit(1);
+});
+
+process.on("unhandledRejection", (reason) => {
+  console.error("Unhandled Rejection:", reason);
+});
+process.on("uncaughtException", (err) => {
+  console.error("Uncaught Exception:", err);
+  process.exit(1);
 });
 
 function escapeHtml(value) {
